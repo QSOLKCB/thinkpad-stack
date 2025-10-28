@@ -1,84 +1,86 @@
-🧠 ThinkPad Stack — Arch Linux Science & Audio Workstation
+# 🧠 ThinkPad-Stack  
+**An Arch Linux workstation stack for science, audio, and dev rigs**  
+Designed by QSOLKCB to turn a ThinkPad (or any Arch box) into a full-fledged developer studio with minimal fuss.
 
-Turn your ThinkPad (or any Arch box) into a developer-grade science, audio, and performance workstation — safely, reproducibly, and fast.
+---
 
-This repo provides two companion scripts:
+## 🔧 What’s in this repo  
 
-Script	Purpose
-setup.sh	One-shot bootstrap installer for a full science + audio + dev environment on Arch Linux. Installs yay, PipeWire stack, TLP, hardware utilities, and core packages.
-update.sh	Ongoing maintenance tool to keep your system fast, clean, and healthy — updates Arch packages, trims SSDs, clears logs, and refreshes AUR packages.
-⚙️ Features
-🧩 setup.sh
+| Script        | Role |
+|--------------|------|
+| `setup.sh`   | One-time bootstrap installer: sets up dev tools, audio stack (PipeWire + WirePlumber), power management (TLP + thermald), GPU support (Mesa/Vulkan), scientific stack (Python, R, Octave), etc. |
+| `update.sh`  | Routine maintenance script: updates Arch & AUR packages, cleans cache, trims SSDs, removes orphans, checks services, and keeps the machine lean. |
 
-Idempotent (safe to re-run anytime)
+---
 
-Auto-detects missing tools and reinstalls yay if needed
+## 🧩 Features at a glance  
 
-Configures:
+### `setup.sh`
+- Idempotent: safe to rerun — it skips already installed components  
+- Detects and installs `yay` if missing, handles AUR fall-backs  
+- Configures:
+  - PipeWire & WirePlumber for low-latency audio  
+  - TLP + thermald for battery & thermal optimization  
+  - Mesa + Vulkan for modern GPU stacks  
+  - Core scientific tools (Python, R, Octave, GCC, CMake)  
+- Clear color output, simple logging — easy to understand what it’s doing  
 
-PipeWire + WirePlumber for low-latency audio
+### `update.sh`
+- Runs system (`pacman`) + AUR package updates  
+- Cleans pacman cache (keeping last 3 versions)  
+- Purges orphaned dependencies  
+- SSD Trim (if NVMe or relevant drive)  
+- `journalctl --vacuum-time` for 2-week log cleanup  
+- Memory/CPU summary at end for quick health check  
 
-TLP + thermald for power management
+---
 
-Vulkan + Mesa for GPU acceleration
+## 🛠 Installation & Usage  
 
-Full scientific stack (python, r, gcc, cmake, octave, etc.)
-
-Gracefully falls back to AUR if official packages fail
-
-Clean colored output and readable logging
-
-🔄 update.sh
-
-Syncs all system and AUR packages
-
-Cleans pacman cache (keeps last 3 versions)
-
-Removes orphaned dependencies
-
-Checks for failed systemd services
-
-Runs SSD trim (if applicable)
-
-Clears journal logs older than 2 weeks
-
-Prints memory usage summary
-
-🧰 Installation
-
-Clone the repo and make both scripts executable:
-
+**Clone the repo and prepare scripts:**
+```bash
 git clone https://github.com/QSOLKCB/thinkpad-stack.git
-cd thinkpad-stack
-chmod +x setup.sh update.sh
 
-Initial Setup
+Initial setup:
+
 ./setup.sh
 
 
-Safe to re-run; it skips anything already installed.
+Run this once (or rerun safely) to get the base platform.
 
-Routine Maintenance
+Routine maintenance:
+
 ./update.sh
 
 
-Recommended weekly or after large package updates.
+Run weekly or after major system upgrades.
 
-🧩 Notes
+✅ Recommended workflow
 
-Designed for Arch Linux (tested on ThinkPad T and X series)
+After initial setup.sh, reboot the system — it ensures firmware, TLP, and audio services are active.
 
-Works on any Arch-based distro (EndeavourOS, Manjaro) with minor tweaks
+Use update.sh regularly (e.g., Sunday morning) to keep things smooth.
 
-You can comment out optional sections (e.g., Powertop calibration) if not needed
+If you add hardware or major components (e.g., external audio interface, GPU), rerun setup.sh to capture any module tweaks.
 
-Reboot after first run to ensure firmware, TLP, and audio services are active
+Track any custom configurations by committing changes to .conf files or /etc tweaks with sudo.
 
-🧠 Why this exists
+📋 Notes
 
-Trent built this to unify his QEC + Producer.ai development environments across machines — a reproducible lab + studio setup in one shell pass.
+Intended for Arch Linux (tested on ThinkPad T/X series); works on Arch-based distros (EndeavourOS, Manjaro) with minimal adjustment.
 
-🧾 License
+You can comment out or disable portions inside the scripts (for example, powertop --auto-tune) if you have specific hardware or workload requirements.
 
-MIT — feel free to fork, tweak, and remix.
-Pull requests welcome!
+If you use a non-ThinkPad laptop, adjust TLP/thermald configs accordingly — see script comments for guidance.
+
+🎯 Why this exists
+
+At QSOLKCB, we build for convergence: science + audio + dev in one machine.
+This repo was created to automate the “lab setup” of every laptop so we spend less time configuring and more time creating.
+
+📝 License
+
+MIT — “Use it, tweak it, share it.”
+Pull requests and improvement suggestions always welcome.
+cd thinkpad-stack
+chmod +x setup.sh update.sh
