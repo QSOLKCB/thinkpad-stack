@@ -1,86 +1,110 @@
-# 🧠 ThinkPad-Stack  
-**An Arch Linux workstation stack for science, audio, and dev rigs**  
-Designed by QSOLKCB to turn a ThinkPad (or any Arch box) into a full-fledged developer studio with minimal fuss.
+````markdown
+# 🧠 ThinkPad-Stack
+Turn a ThinkPad (or any Arch Linux box) into a **science + audio + dev** workstation with two scripts: a safe, idempotent setup and a lean maintenance routine.
+
+> **Targets:** Arch Linux on ThinkPad T/X/P series (works on other Arch-based distros with minor tweaks)  
+> **Scripts:** `setup.sh` (bootstrap) · `update.sh` (maintenance)
 
 ---
 
-## 🔧 What’s in this repo  
+## ✨ What you get
 
-| Script        | Role |
-|--------------|------|
-| `setup.sh`   | One-time bootstrap installer: sets up dev tools, audio stack (PipeWire + WirePlumber), power management (TLP + thermald), GPU support (Mesa/Vulkan), scientific stack (Python, R, Octave), etc. |
-| `update.sh`  | Routine maintenance script: updates Arch & AUR packages, cleans cache, trims SSDs, removes orphans, checks services, and keeps the machine lean. |
-
----
-
-## 🧩 Features at a glance  
-
-### `setup.sh`
-- Idempotent: safe to rerun — it skips already installed components  
-- Detects and installs `yay` if missing, handles AUR fall-backs  
-- Configures:
-  - PipeWire & WirePlumber for low-latency audio  
-  - TLP + thermald for battery & thermal optimization  
-  - Mesa + Vulkan for modern GPU stacks  
-  - Core scientific tools (Python, R, Octave, GCC, CMake)  
-- Clear color output, simple logging — easy to understand what it’s doing  
-
-### `update.sh`
-- Runs system (`pacman`) + AUR package updates  
-- Cleans pacman cache (keeping last 3 versions)  
-- Purges orphaned dependencies  
-- SSD Trim (if NVMe or relevant drive)  
-- `journalctl --vacuum-time` for 2-week log cleanup  
-- Memory/CPU summary at end for quick health check  
+- **Audio**: PipeWire + WirePlumber for low-latency, JACK/Pulse/ALSA compatibility. :contentReference[oaicite:0]{index=0}  
+- **Power & thermals**: TLP + thermald tuned for laptops; easy to adjust in `/etc/tlp.conf`. :contentReference[oaicite:1]{index=1}  
+- **Dev/Science stack**: Python toolchain, compilers, R/Octave (adjust as needed).
+- **GPU & media**: Mesa/Vulkan basics for modern stacks.
+- **AUR support**: Installs an AUR helper and keeps the flow consistent with Arch guidelines. :contentReference[oaicite:2]{index=2}
+- **Maintenance**: Full system updates, AUR refresh, orphan cleanup, pacman cache trim, SSD TRIM, journal vacuum—aligned with Arch’s maintenance recommendations. :contentReference[oaicite:3]{index=3}
 
 ---
 
-## 🛠 Installation & Usage  
+## 🔧 Quick start
 
-**Clone the repo and prepare scripts:**
 ```bash
 git clone https://github.com/QSOLKCB/thinkpad-stack.git
-
-Initial setup:
-
-./setup.sh
-
-
-Run this once (or rerun safely) to get the base platform.
-
-Routine maintenance:
-
-./update.sh
-
-
-Run weekly or after major system upgrades.
-
-✅ Recommended workflow
-
-After initial setup.sh, reboot the system — it ensures firmware, TLP, and audio services are active.
-
-Use update.sh regularly (e.g., Sunday morning) to keep things smooth.
-
-If you add hardware or major components (e.g., external audio interface, GPU), rerun setup.sh to capture any module tweaks.
-
-Track any custom configurations by committing changes to .conf files or /etc tweaks with sudo.
-
-📋 Notes
-
-Intended for Arch Linux (tested on ThinkPad T/X series); works on Arch-based distros (EndeavourOS, Manjaro) with minimal adjustment.
-
-You can comment out or disable portions inside the scripts (for example, powertop --auto-tune) if you have specific hardware or workload requirements.
-
-If you use a non-ThinkPad laptop, adjust TLP/thermald configs accordingly — see script comments for guidance.
-
-🎯 Why this exists
-
-At QSOLKCB, we build for convergence: science + audio + dev in one machine.
-This repo was created to automate the “lab setup” of every laptop so we spend less time configuring and more time creating.
-
-📝 License
-
-MIT — “Use it, tweak it, share it.”
-Pull requests and improvement suggestions always welcome.
 cd thinkpad-stack
 chmod +x setup.sh update.sh
+````
+
+### 1) Bootstrap once
+
+```bash
+./setup.sh
+```
+
+* Safe to re-run; it skips what’s already installed.
+* Reboot afterward so audio/power services start cleanly.
+
+### 2) Maintain regularly
+
+```bash
+./update.sh
+```
+
+* Run weekly or after big upgrades. It updates Arch & AUR, trims cache/logs, removes orphans, and prints a quick health summary. ([wiki.archlinux.org][1])
+
+---
+
+## 🧩 Script overview
+
+### `setup.sh`
+
+* Detects/installs prerequisites (including an AUR helper). ([wiki.archlinux.org][2])
+* Configures:
+
+  * PipeWire + WirePlumber (Pulse/JACK/ALSA compatible) for production-friendly audio. ([wiki.archlinux.org][3])
+  * TLP + thermald defaults appropriate for laptops; tweak `/etc/tlp.conf` as needed. ([wiki.archlinux.org][4])
+  * Core dev/science packages (editable list inside the script).
+* Idempotent: re-running won’t wreck your system; it just ensures the stack is present.
+
+### `update.sh`
+
+* `pacman -Syu` full upgrades (no partial upgrades), then AUR updates. ([wiki.archlinux.org][1])
+* Cleans pacman cache (keeps recent versions), removes orphans, vacuums journals, trims SSDs. ([wiki.archlinux.org][1])
+
+---
+
+## ✅ Recommended workflow
+
+1. **Run `./setup.sh`**, reboot once.
+2. **Run `./update.sh`** weekly (or before heavy sessions).
+3. When you add new hardware (USB DAC, eGPU, dock), re-run `setup.sh` to pull any optional bits.
+
+---
+
+## 🔧 Configuration notes
+
+* **PipeWire:** If you use JACK-native apps, PipeWire provides a compat layer; JACK/ALSA/Pulse clients should “just work”. Check `pavucontrol` for routing. ([wiki.archlinux.org][3])
+* **TLP:** Battery thresholds, runtime PCIe power management on AC, and Wi-Fi behaviors can be set in `/etc/tlp.conf`. Use `tlp-stat` for diagnostics. ([wiki.archlinux.org][4])
+* **AUR:** Treat PKGBUILDs as untrusted until reviewed; the helper automates builds but you’re responsible for updates and rebuilds after soname bumps. ([wiki.archlinux.org][2])
+
+---
+
+## 🩺 Troubleshooting (short list)
+
+* **“Partial upgrades are unsupported.”**
+  Don’t mix `-Sy` with later `-S`; always do full upgrades with `pacman -Syu`. If an upgrade fails mid-flight, resolve it before any other package operations. ([wiki.archlinux.org][1])
+
+* **Disk space creep (cache/orphans/logs).**
+  Use the provided maintenance script; it trims `/var/cache/pacman/pkg`, prunes orphans, and vacuums the journal—recommended by Arch’s maintenance guide. ([wiki.archlinux.org][1])
+
+* **USB DAC / sample-rate quirks or JACK routing.**
+  PipeWire supports multiple client types and can be tuned for lossless rates; see PipeWire docs and `pw-top` to inspect live streams. ([wiki.archlinux.org][3])
+
+* **Battery/Wi-Fi quirks after TLP.**
+  Adjust `RUNTIME_PM_ON_AC`, `DEVICES_TO_ENABLE_ON_STARTUP`, or USB denylist in `/etc/tlp.conf`, then `systemctl restart tlp`. ([wiki.archlinux.org][4])
+
+---
+
+## 📦 Scope & support
+
+* Target: **Arch Linux** (ThinkPad T/X/P series), but works broadly on Arch-based distros.
+* If you don’t need parts of the stack, **comment them out** in the scripts—both are readable shell with clear sections.
+
+---
+
+## 📝 License
+
+MIT — use, fork, remix. PRs welcome.
+
+```
