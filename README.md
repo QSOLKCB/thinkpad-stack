@@ -105,5 +105,3 @@ chmod +x setup.sh update.sh
 ## 📝 License
 
 MIT — use, fork, remix. PRs welcome.
-
-```
