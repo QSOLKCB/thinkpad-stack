@@ -1,4 +1,3 @@
-````markdown
 # 🧠 ThinkPad-Stack
 Turn a ThinkPad (or any Arch Linux box) into a **science + audio + dev** workstation with two scripts: a safe, idempotent setup and a lean maintenance routine.
 
